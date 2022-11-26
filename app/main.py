@@ -8,11 +8,6 @@ from fastapi import FastAPI
 app = FastAPI()
 
 
-@app.get("/")
-async def version():
-    return {"status": "available", "version": os.getenv('VERSION')}
-
-
 async def get_monastirev(term: str) -> typing.List[typing.Dict]:
     """
     Поиск лекарств в аптеке "Монастырёв".
@@ -28,7 +23,9 @@ async def get_monastirev(term: str) -> typing.List[typing.Dict]:
                     'https://monastirev.ru/search',
                     params={
                         'term': term,
-                        'page': page
+                        'page': page,
+                        'perPage': 100,
+                        'sortBy': 'name-asc'
                     }
             ) as response:
                 text = await response.text()
@@ -69,7 +66,8 @@ async def get_apteka(term: str) -> typing.List[typing.Dict]:
                         'page': page,
                         'pageSize': 50,
                         'withprice': 'true',
-                        'phrase': term
+                        'phrase': term,
+                        'sort': 'byname'
                     },
                     headers={
                         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, '
@@ -120,7 +118,7 @@ async def get_apteka25(term: str) -> typing.List[typing.Dict]:
                     'https://аптека25.рф/api/v1/products/short',
                     params={
                         'allow_suggested_products': 'false',
-                        'order_by': 'relevance',
+                        'order_by': 'alphabetically',
                         'page': page,
                         'format': 'json',
                         'city': 1,
@@ -159,7 +157,7 @@ async def get_minicen(term: str) -> typing.List[typing.Dict]:
                     'idTradePoint': 17798,
                     'Request': term,
                     'SearchType': 2,
-                    'Sorting': 5,
+                    'Sorting': 3,
                     'Page': 1,
                     'PerPage': 1,
                     'dontUseMix': 0,
@@ -195,7 +193,8 @@ async def get_gosapteka(term: str) -> typing.List[typing.Dict]:
                     params={
                         'w': term,
                         'page': page
-                    }
+                    },
+                    cookies={'ga-catalog-sort-search-name': 'au'}
             ) as response:
                 text = await response.text()
                 soup = BeautifulSoup(text, 'html.parser')
@@ -231,7 +230,8 @@ async def get_ovita(term: str) -> typing.List[typing.Dict]:
                     params={
                         'word': term,
                         'count': 120,
-                        'page': page
+                        'page': page,
+                        'sort': 'nameup'
                     }
             ) as response:
                 text = await response.text()
@@ -294,3 +294,8 @@ async def get_pharmacies(pharmacy_id: int, query: typing.Union[str, None] = None
                 return {'status': 'error', 'description': error}
         case _:
             return {'status': 'error', 'description': 'Pharmacy with this ID not found.'}
+
+
+@app.get("/")
+async def version():
+    return {"status": "available", "version": os.getenv('VERSION')}

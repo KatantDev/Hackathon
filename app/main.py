@@ -57,6 +57,31 @@ async def get_monastirev(term: str) -> typing.List[typing.Dict]:
         return result
 
 
+async def get_monastirev_item(url: str) -> typing.Dict:
+    if 'monastirev.ru' not in url:
+        url = f'https://monastirev.ru/offer/vladivostok/{url}'
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url=url) as response:
+            text = await response.text()
+            soup = BeautifulSoup(text, 'html.parser')
+            result = {
+                'title': soup.find('h1', {'class': 'product-page__name'}).get_text(),
+                'url': url,
+                'image': soup.find('a', {'class': 'magnifier-hover-image'}).get('href'),
+                'description': soup.find('div', {'class': 'product-page__name-description'}).get_text(),
+                'price': float(soup.find('div', {'class': 'offer__price-current'}).get_text()),
+                'additions': {}
+            }
+            additions = soup.find_all('div', {'class': 'grid__col-tablet-4 grid__col-12'})
+            for addition in additions:
+                title = addition.find('div', {'class': 'product-page__description-title'}).get_text()
+                value = addition.find('div', {'class': 'product-page__description-value'}).get_text().strip()
+                result['additions'][title] = value
+
+    return result
+
+
 async def get_apteka(term: str) -> typing.List[typing.Dict]:
     """
     Поиск лекарств в аптеке "Аптека.ру".
@@ -303,6 +328,19 @@ async def get_pharmacies(pharmacy_id: int, query: typing.Union[str, None] = None
             try:
                 result = await get_ovita(query)
                 return {'status': 'ok', 'offers': result}
+            except Exception as error:
+                return {'status': 'error', 'description': error}
+        case _:
+            return {'status': 'error', 'description': 'Pharmacy with this ID not found.'}
+
+
+@app.get("/get_pharmacy_item/{pharmacy_id}")
+async def get_pharmacies(pharmacy_id: int, item: str):
+    match pharmacy_id:
+        case 1:
+            try:
+                result = await get_monastirev_item(item)
+                return {'status': 'ok', 'item': result}
             except Exception as error:
                 return {'status': 'error', 'description': error}
         case _:

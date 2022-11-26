@@ -1,34 +1,34 @@
 # Test your FastAPI endpoints
 
-GET http://127.0.0.1:8000/
+GET http://127.0.0.1/
 Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8000/get_pharmacies/1?query={{query}}
+GET http://127.0.0.1/get_pharmacies/1?query={{query}}
 Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8000/get_pharmacies/2?query={{query}}
+GET http://127.0.0.1/get_pharmacies/2?query={{query}}
 Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8000/get_pharmacies/3?query={{query}}
+GET http://127.0.0.1/get_pharmacies/3?query={{query}}
 Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8000/get_pharmacies/4?query={{query}}
+GET http://127.0.0.1/get_pharmacies/4?query={{query}}
 Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8000/get_pharmacies/5?query={{query}}
+GET http://127.0.0.1/get_pharmacies/5?query={{query}}
 Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8000/get_pharmacies/6?query={{query}}
+GET http://127.0.0.1/get_pharmacies/6?query={{query}}
 Accept: application/json

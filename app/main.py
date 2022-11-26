@@ -253,11 +253,12 @@ async def get_ovita(term: str) -> typing.List[typing.Dict]:
                     return result
 
                 for offer in offers:
+                    price = offer.find('div', {'class': 'product-price-number'}).get_text().replace(' ', '')
                     data = {
                         'image': 'https://ovita.ru' + offer.find('meta', {'itemprop': 'image'}).get('content'),
                         'title': offer.find('div', {'class': 'product-description-name'}).find('a').get_text(),
                         'description': offer.find('div', {'class': 'product-description-text'}).get_text(),
-                        'price': float(offer.find('div', {'class': 'product-price-number'}).get_text()),
+                        'price': float(price),
                         'link': 'https://ovita.ru' +
                                 offer.find('div', {'class': 'product-description-name'}).find('a').get('href')
                     }

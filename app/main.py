@@ -58,6 +58,12 @@ async def get_monastirev(term: str) -> typing.List[typing.Dict]:
 
 
 async def get_monastirev_item(url: str) -> typing.Dict:
+    """
+    Парсинг подробной информации для товара в аптеке "Монастырёв".
+
+    :param url: Ссылка на товар.
+    :return result: Информация о товаре
+    """
     if 'monastirev.ru' not in url:
         url = f'https://monastirev.ru/offer/vladivostok/{url}'
 
@@ -67,7 +73,7 @@ async def get_monastirev_item(url: str) -> typing.Dict:
             soup = BeautifulSoup(text, 'html.parser')
             result = {
                 'title': soup.find('h1', {'class': 'product-page__name'}).get_text(),
-                'url': url,
+                'link': url,
                 'image': soup.find('a', {'class': 'magnifier-hover-image'}).get('href'),
                 'description': soup.find('div', {'class': 'product-page__name-description'}).get_text(),
                 'price': float(soup.find('div', {'class': 'offer__price-current'}).get_text()),

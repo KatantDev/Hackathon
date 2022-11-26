@@ -4,9 +4,17 @@ import aiohttp
 import typing
 from bs4 import BeautifulSoup
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 async def get_monastirev(term: str) -> typing.List[typing.Dict]:
     """

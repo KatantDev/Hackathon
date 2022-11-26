@@ -16,6 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 async def get_monastirev(term: str) -> typing.List[typing.Dict]:
     """
     Поиск лекарств в аптеке "Монастырёв".
@@ -70,7 +71,6 @@ async def get_apteka(term: str) -> typing.List[typing.Dict]:
             async with session.get(
                     'https://api.apteka.ru/Search/ByPhrase',
                     params={
-                        'q': term,
                         'page': page,
                         'pageSize': 50,
                         'withprice': 'true',
@@ -87,6 +87,9 @@ async def get_apteka(term: str) -> typing.List[typing.Dict]:
                     return result
 
                 for offer in json_info['result']:
+                    if offer['humanableUrl'] is None:
+                        continue
+
                     if offer['itemVariantsInfo'] is not None:
                         for variant in offer['itemVariantsInfo']:
                             data = {
@@ -103,7 +106,6 @@ async def get_apteka(term: str) -> typing.List[typing.Dict]:
                             'id': offer['uniqueItemInfo']['id'],
                             'title': offer['tradeName'].replace('<em>', '').replace('</em>', ''),
                             'image': offer['photos'][0]['original'],
-                            'variant': offer['uniqueItemInfo']['goodNaming']['formReleaseShort'],
                             'price': float(offer['noDiscPrice']),
                             'link': 'https://apteka.ru/product/' + offer['humanableUrl'],
                         }
@@ -271,11 +273,11 @@ async def get_pharmacies(pharmacy_id: int, query: typing.Union[str, None] = None
             except Exception as error:
                 return {'status': 'error', 'description': error}
         case 2:
-            try:
-                result = await get_apteka(query)
-                return {'status': 'ok', 'offers': result}
-            except Exception as error:
-                return {'status': 'error', 'description': error}
+            # try:
+            result = await get_apteka(query)
+            return {'status': 'ok', 'offers': result}
+            # except Exception as error:
+            #     return {'status': 'error', 'description': error}
         case 3:
             try:
                 result = await get_apteka25(query)

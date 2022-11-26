@@ -213,13 +213,15 @@ async def get_gosapteka(term: str) -> typing.List[typing.Dict]:
                     return result
 
                 for offer in offers:
+                    footer = offer.find('div', {'class': 'el-footer'})
                     data = {
                         'title': offer.find('div', {'class': 'el-name'}).find('a').get_text(),
                         'image': 'https://gosaptekavl.ru' + offer.find('a').get('orig'),
                         'price': float(offer.find('div', {'class': 'el-price'}).get('pr')),
-                        'description': offer.find('div', {'class': 'el-footer'}).get_text(),
                         'link': 'https://gosaptekavl.ru' + offer.find('a').get('href')
                     }
+                    if footer is not None:
+                        offer['description'] = footer.get_text()
                     result.append(data)
         return result
 
@@ -273,11 +275,11 @@ async def get_pharmacies(pharmacy_id: int, query: typing.Union[str, None] = None
             except Exception as error:
                 return {'status': 'error', 'description': error}
         case 2:
-            # try:
-            result = await get_apteka(query)
-            return {'status': 'ok', 'offers': result}
-            # except Exception as error:
-            #     return {'status': 'error', 'description': error}
+            try:
+                result = await get_apteka(query)
+                return {'status': 'ok', 'offers': result}
+            except Exception as error:
+                return {'status': 'error', 'description': error}
         case 3:
             try:
                 result = await get_apteka25(query)

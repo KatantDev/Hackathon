@@ -177,7 +177,7 @@ async def get_apteka25(term: str) -> typing.List[typing.Dict]:
                         'title': offer['name'],
                         'image': offer['offers'][0]['image'],
                         'price': float(offer['offers'][0]['price']),
-                        'link': 'https://apteka.ru/product/' + offer['offers'][0]['code'],
+                        'link': 'https://аптека25.рф/product/' + offer['offers'][0]['code'],
                     }
                     result.append(data)
         return result

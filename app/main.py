@@ -45,11 +45,12 @@ async def get_monastirev(term: str) -> typing.List[typing.Dict]:
                     return result
 
                 for offer in offers:
+                    price = offer.find('div', {'class': 'offer__price-current'}).get_text().strip()
                     data = {
                         'title': offer.get('data-name').strip(),
                         'image': offer.get('data-image-url'),
                         'variant': offer.get('data-variant'),
-                        'price': float(offer.find('div', {'class': 'offer__price-current'}).get_text().strip()),
+                        'price': float(price.split('\n')[0]),
                         'description': offer.find('div', {'class': 'offer__description'}).get_text().strip(),
                         'link': 'https://monastirev.ru' + offer.find('a', {'class': 'offer__link'}).get('href')
                     }
